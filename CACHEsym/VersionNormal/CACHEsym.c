@@ -11,19 +11,36 @@
 
 #define HDIRECCION (int)ceil((float)BYTESLINEAS/2.0)
 
+//RECOLECTOR DE BASURA
+void* zaborra;
 
 typedef struct {
 	short int ETQ;
 	short int Datos[BYTESLINEAS];
 } T_LINEA_CACHE;
 
-
+/*Inicializa a 0xFF las etiquetas y a 0 los datos de un T_LINEA_CACHE.
+ *Recoge T_LINEA_CACHE* e int con la cantidad de ellas.
+ *No devuelve nada (void).
+ */
 void inicializarCache(T_LINEA_CACHE *,int);
 
+/*Consigue una linea de un FILE*. Hara falta gestinar el acceso al puntero para hacer despues free(FILE*).
+ *Recoge el fichero FILE*.
+ *Devuelve una linea de FILE* (char*).
+ */
 char* fconstr(FILE *);
 
+/*Convierte numero hexadecimal en char* a int de cada linea de un FILE*.
+ *Recoge el fichero FILE*.
+ *Devuelve el numero hexadecimal de la linea a la que este apuntando FILE* (int).
+ */
 int fstrtx(FILE *);
 
+/*Muestra mensaje de error y mata el proceso.
+ *Recoge el mensaje (char*).
+ *Obviamente no devuelve nada (void).
+ */
 void nofufa(char *);
 
 
@@ -136,7 +153,7 @@ int main(int argc, char *argv[]) {
 //!3
 	
 	free(texto);
-	
+	free(zaborra);
 	
 	return 0;
 }
@@ -193,7 +210,7 @@ char* fconstr(FILE *f) {
 
 int fstrtx(FILE *f) {
 	(char*)zaborra = fconstr(f);
-	return (int)strtol(, NULL, 16);
+	return (int)strtol(zaborra, NULL, 16);
 }
 
 void nofufa(char* mensaje) {
