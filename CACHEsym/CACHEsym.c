@@ -3,6 +3,13 @@
 #include <string.h>
 #include <math.h>
 
+//Para el sleep:
+#ifdef _WIN32
+	#include <Windows.h>
+#else
+	#include <unistd.h>
+#endif
+
 /* Lineas en cache.
  * Bytes por linea.
  * Tamaino texto. Debe ser igual al maximo de accesos.
@@ -10,6 +17,7 @@
  * Tiempo de acceso a RAM.
  * Valor inicial de la etiqueta.
  * Valor inicial de los datos.
+ * Tiempo de sleep.
  */
 #define LINEAS 4
 #define BYTESLINEAS 8
@@ -18,6 +26,7 @@
 #define ACCRAM 10
 #define ETQINI 0xFF
 #define DATINI 0
+#define TIEMSLEEP 2
 
 //RECOLECTOR DE BASURA
 void* zaborra;
@@ -145,7 +154,14 @@ int main(int argc, char *argv[]) {
 		
 		//Se ainade al texto el caracter DATO.
 		texto[tamTexto++] = lineas[dato_acceso.lin].Datos[dato_acceso.pal];
-//		sleep(2);
+		
+		//El sleep:
+		  #ifdef _WIN32
+		  	Sleep(TIEMSLEEP*1000);
+		  #else
+			//No necesitamos poner usleep (mejor dicho, nanosleep).
+		  	sleep(TIEMSLEEP);
+		  #endif
 	}
 //!2
 
