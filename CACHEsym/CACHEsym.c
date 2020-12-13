@@ -19,17 +19,8 @@
 #define ETQINI 0xFF
 #define DATINI 0
 
-
-//#define HDIRECCION (int)ceil((float)BYTESLINEAS/2.0)
-
-
 //RECOLECTOR DE BASURA
 void* zaborra;
-
-/* COSAS
- * Comentarios generales de funciones
- * Probar con otros RAM.bin y accesos.txt
-*/
 
 typedef struct {
 	short int ETQ;
@@ -61,15 +52,15 @@ char* fconstr(FILE *);
  */
 int fstrtx(FILE *);
 
-/* 
- * 
- * 
+/* Separa un acceso (int) en tres partes: etiqueta, linea y palabra.
+ * Recoge un acceso (int).
+ * Devuelve una estructura DATOS_ACCESO.
  */
 DATOS_ACCESO conDatosAcceso(int);
 
-/* 
- * 
- * 
+/* Imprime los datos de la cache.
+ * Recoje un puntero a la cache (T_LINEA_CAHE*).
+ * No devuelve nada.
  */
  void imprimirCache(T_LINEA_CACHE*);
  
