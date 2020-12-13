@@ -5,7 +5,7 @@
 
 /* Lineas en cache.
  * Bytes por linea.
- * Tamaino texto.
+ * Tamaino texto. Debe ser igual al maximo de accesos.
  * Tamaino RAM.
  * Tiempo de acceso a RAM.
  * Valor inicial de la etiqueta.
@@ -27,18 +27,13 @@
 void* zaborra;
 
 /* COSAS
- * tiempoglobal++;
  * Comentarios generales de funciones
  * Probar con otros RAM.bin y accesos.txt
- * //Inicializados todos sus caracteres a '\0'     Esto lo quito y de nuevo al ponerle el '\0'?
- * Subir lo del CACHEsym > cosa -> Danila que el paco demonio cree que no estas en el grupo xD
- * Funcion fconstr o lo de con fscanf?
- * return (int)strtol(zaborra, NULL, 16);          Deberiamos cambiar ese 16 por una constante? es que no se, pa que.
 */
 
 typedef struct {
 	short int ETQ;
-	//A ver, Datos es unsigned char * y no short int [BYTESLINEAS] ya que queremos guardar chars, duh.
+	//A ver, Datos es unsigned char * y no short int [BYTESLINEAS] ya que queremos guardar chars.
 	unsigned char Datos[BYTESLINEAS];
 } T_LINEA_CACHE;
 
@@ -92,11 +87,8 @@ int main(int argc, char *argv[]) {
 	//Char [100] para guardar el texto.
 	char texto[MAXTEXTO];
 	
-	//Inicializados todos sus caracteres a '\0'
-	//Asi me evito poner al final un:
-		//Se completa la cadena con un final de cadena.
-		//texto[tamTexto]='\0';
-	memset(texto,'\0',sizeof(texto));
+	//En caso de querer inicializar todos sus caracteres a '\0'
+//	memset(texto,'\0',sizeof(texto));
 	
 	//Variable que guarda tamaino actual de texto.
 	int tamTexto=0;
@@ -168,6 +160,9 @@ int main(int argc, char *argv[]) {
 
 //!3	Fin del programa. Se imprimen datos finales y se cierra y libera todo.
 	
+	//Se completa la cadena con un final de cadena.
+	texto[tamTexto]='\0';
+	
 	//Se cierran los FILE*. Si se llego hasta aca significa que accesos apunta a un fichero.
 	fclose(accesos);
 	
@@ -190,7 +185,7 @@ void inicializarCache(T_LINEA_CACHE *lineas) {
 	
 	while(i--) {
 //		*(lineas+i) = (T_LINEA_CACHE){0xFF, a};
-//		printf("ºpatoº%iºº",(lineas+i)->Datos[i]);
+//		printf("ÂºpatoÂº%iÂºÂº",(lineas+i)->Datos[i]);
 		(lineas+i)->ETQ = ETQINI;
 		a=BYTESLINEAS;
 		while(a--) {
