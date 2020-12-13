@@ -131,13 +131,18 @@ int main(int argc, char *argv[]) {
 		
 		//Se lee una direccion del fichero.
 		dato = fstrtx(accesos);
+		if(dato==0 && feof(accesos)) {
+			printf("\n\nAVISO: Es posible que al final de accesos_memoria.txt hayas dejado un salto de linea.\nSi el ultimo acceso no es al 0x0000, eliminalo por favor\nAcceso a la direccion 0x0000:");
+		}
+		else {
+			printf("\n");
+		}
 		
 		//Se obtiene etq y linea con mascaras de bit y desplazamientos a nivel de bit.
 		dato_acceso = conDatosAcceso(dato);
 		
-		tiempoglobal++;
 		//Se comprueba la existencia del dato en cache.
-		printf("\n");
+		tiempoglobal++;
 		if(lineas[dato_acceso.lin].ETQ!=dato_acceso.etq) {
 			//Se imprime:
 			printf("\nT: %d, Fallo de CACHE %d, ADDR %04X ETQ %X linea %02X palabra %02X bloque %02X", tiempoglobal, ++numfallos,dato,dato_acceso.etq,dato_acceso.lin,dato_acceso.pal,dato/BYTESLINEAS);
@@ -272,4 +277,4 @@ void nofufa(char* mensaje) {
 	exit(-1);
 }
 
-/*1607865202*/
+/*1607867992*/
