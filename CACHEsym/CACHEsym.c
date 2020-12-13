@@ -18,6 +18,8 @@
  * Valor inicial de la etiqueta.
  * Valor inicial de los datos.
  * Tiempo de sleep.
+ * Aumento realloc de fconstr. Lo ponemos a 6 para que no haga realloc ya que los accesos son de 5.
+   Pero en el caso de poner direcciones más largas, funcionaria perfectamente.
  */
 #define LINEAS 4
 #define BYTESLINEAS 8
@@ -27,6 +29,7 @@
 #define ETQINI 0xFF
 #define DATINI 0
 #define TIEMSLEEP 2
+#define AUMCONSTR 6
 
 //RECOLECTOR DE BASURA
 void* zaborra;
@@ -201,12 +204,9 @@ void inicializarCache(T_LINEA_CACHE *lineas) {
 
 char* fconstr(FILE *f) {
 
-	//En cuanto sumamos el realloc
-	unsigned char aumento=6;
-
 	//Guarda la cadena que se devolvera.
 	char* str;
-	str = (char*)malloc(sizeof(char)*aumento);	
+	str = (char*)malloc(sizeof(char)*AUMCONSTR);	
 	if (!str) {
 		nofufa("\nError al leer");
 	}
@@ -221,8 +221,8 @@ char* fconstr(FILE *f) {
 	while( (tmp!='\n') && !feof(f)) {
 		str[tam-1]=tmp;
 		tam++;
-		if( !(tam%aumento) ) {
-			str = (char*)realloc(str,tam+aumento);
+		if( !(tam%AUMCONSTR) ) {
+			str = (char*)realloc(str,tam+AUMCONSTR);
 			
 			//Si hubo algun problema con el realloc, saldra.
 			if(!str) {
