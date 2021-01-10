@@ -10,9 +10,6 @@
 #define NULL_INODO 0xFFFF
 #define NULL_BLOQUE 0xFFFF
 
-//*Enum de cosas
-enum comando{bytemaps, copy, dir, info, imprimir, rename, remove, salir};
-
 
 /* Estructura del superbloque */
 typedef struct {
@@ -54,3 +51,36 @@ typedef struct {
 typedef struct{
   unsigned char dato[SIZE_BLOQUE]; 	
 } EXT_DATOS;
+
+/***************/
+
+/* Aumento realloc de fconstr.
+ * Cantidad de datos en comando.
+ */
+#define AUMCONSTR 16
+#define DATOSCOMANDO 3
+
+//RECOLECTOR DE BASURA
+void* zaborra;
+
+//Solo porque puedo.
+typedef char* String;
+
+//*Enum de cosas
+//enum comando{bytemaps, copy, dir, info, imprimir, birname, birmove, salir};
+
+/***************/
+
+/*Muestra mensaje de error y mata el proceso.
+ *Recoge el mensaje (char*).
+ *Obviamente no devuelve nada (void).
+ */
+void nofufa(char *);
+
+/* Consigue una linea de un FILE*. Hara falta gestinar el acceso al puntero para hacer despues free(char*).
+ * Recoge el fichero FILE*.
+ * Devuelve una linea de FILE* (char*).
+ */
+char* string(FILE *);
+
+/**************/
