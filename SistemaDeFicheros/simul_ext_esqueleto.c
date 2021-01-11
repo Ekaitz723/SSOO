@@ -5,12 +5,12 @@
 
 #define LONGITUD_COMANDO 100
 
+//Pongo las X a las funcione que estan hechas ya escritas (no dejadas en comentario) y si alguien esta empezandolas que ponga su nombre
+void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps); // X
 
-void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps);
+int ComprobarComando(char *strcomando, char datosComando[][LONGITUD_COMANDO]); // X
 
-int ComprobarComando(char *strcomando, char datosComando[][LONGITUD_COMANDO]);
-
-void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup);
+void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup); // X
 
 int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
               char *nombre);
@@ -54,8 +54,8 @@ int main() {
 //	char argumento2[LONGITUD_COMANDO];
 
 	
-	printf("ºº%iºº",ComprobarComando(zaborra = string(stdin),datosComando));
-	printf("\n\nº%s %s %sº",datosComando[0], datosComando[1], datosComando[2]);
+	printf("ï¿½ï¿½%iï¿½ï¿½",ComprobarComando(zaborra = string(stdin),datosComando));
+	printf("\n\nï¿½%s %s %sï¿½",datosComando[0], datosComando[1], datosComando[2]);
 	free(zaborra);
 	
 	
@@ -126,8 +126,13 @@ int ComprobarComando(char *strcomando, char datosComando[][LONGITUD_COMANDO]) {
 	int i = 0;
 	String partes;
 	
+    
+   
+    
 	//Se crea un array de char para guardar una copia de strcomando.
-	char completo[strlen(strcomando)+1];
+    //Da error poruqe el tamaÃ±o del array hay que mantener constante... a no ser....
+    char completo[strlen(strcomando)+1];
+    
 	
 	//Se vuelca strcomando en completo. Se hace con memcpy para copiar tambien el fin de cadena.
 	memcpy(completo, strcomando, strlen(strcomando)+1);
@@ -141,4 +146,43 @@ int ComprobarComando(char *strcomando, char datosComando[][LONGITUD_COMANDO]) {
 	} while(partes = strtok(NULL, " "));
 	
 	return 0;
+}
+/*
+//Aqui me lo pongo para no olvidarme de ninguno
+unsigned int s_inodes_count;  X        
+  unsigned int s_blocks_count; X         
+ unsigned int s_free_blocks_count;X   
+unsigned int s_free_inodes_count;  X  
+  unsigned int s_first_data_block;    X  
+  unsigned int s_block_size;   X     
+  unsigned char s_relleno[SIZE_BLOQUE-6*sizeof(unsigned int)]; 
+*/
+void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
+    printf("Numero de Inodos: %i", psup -> s_inodes_count);
+    printf("Numero de Bloques: %i", psup -> s_blocks_count);
+    printf("Numero de Bloques Libres: %i", psup -> s_free_blocks_count);
+    printf("Numero de Inodos Libres: %i", psup -> s_free_inodes_count);
+    printf("Primer Bloque de Data: %i", psup -> s_first_data_block);
+    printf("TamaÃ±o de bloque: %i", psup -> s_block_size);
+    printf("TamaÃ±o de Relleno: %i", psup -> s_relleno);
+}
+
+void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
+    
+    //Bit map de inodos (como en los ejercicios en clase)
+    printf("\nBitmap De Inodos: ");
+    //Hacemos un bucle donde pasamos por todos los elemnetos que se guarda en el bmap_inodos
+    for(int i =0;i<MAX_INODOS;i++){
+        printf("%i ",ext_bytemaps->bmap_inodos[i]);
+    }
+    //Lo mismo de antes pero con Bitmaps de bloque
+    printf("\nBitmap De Bloques: ");
+    for(int j =0;j<MAX_BLOQUES_PARTICION;j++){
+        printf("%i ",ext_bytemaps->bmap_bloques[j]);
+    }
+    //Lo mismo de antes pero con Bitmaps de relleno (no se que es pero venga esto tiene un bitmap asique imprimir)
+    printf("\nBitmap De Relleno: ");
+    for(int k =0;k<SIZE_BLOQUE-(MAX_BLOQUES_PARTICION+MAX_INODOS)*sizeof(char);k++){
+        printf("%i ",ext_bytemaps->bmap_relleno[k]);
+    }
 }
