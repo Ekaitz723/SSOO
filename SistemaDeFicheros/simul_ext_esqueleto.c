@@ -54,8 +54,8 @@ int main() {
 //	char argumento2[LONGITUD_COMANDO];
 
 	
-	printf("��%i��",ComprobarComando(zaborra = string(stdin),datosComando));
-	printf("\n\n�%s %s %s�",datosComando[0], datosComando[1], datosComando[2]);
+	//printf("��%i��",ComprobarComando(zaborra = string(stdin),datosComando));
+	//printf("\n\n�%s %s %s�",datosComando[0], datosComando[1], datosComando[2]);
 	free(zaborra);
 	
 	
@@ -169,20 +169,26 @@ void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
 
 void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
     
-    //Bit map de inodos (como en los ejercicios en clase)
-    printf("\nBitmap De Inodos: ");
+    /*Bit map de inodos (como en los ejercicios en clase)*/
+    
     //Hacemos un bucle donde pasamos por todos los elemnetos que se guarda en el bmap_inodos
-    for(int i =0;i<MAX_INODOS;i++){
-        printf("%i ",ext_bytemaps->bmap_inodos[i]);
-    }
+    printf("\nBitmap De Inodos: ");
+    int i = -MAX_INODOS;
+    while(++i) {
+        printf("%i ",ext_bytemaps->bmap_inodos[-i]);
+	}
+	
     //Lo mismo de antes pero con Bitmaps de bloque
     printf("\nBitmap De Bloques: ");
-    for(int j =0;j<MAX_BLOQUES_PARTICION;j++){
-        printf("%i ",ext_bytemaps->bmap_bloques[j]);
-    }
+    i -= MAX_BLOQUES_PARTICION;
+    while(++i) {
+        printf("%i ",ext_bytemaps->bmap_bloques[-i]);
+	}
+
     //Lo mismo de antes pero con Bitmaps de relleno (no se que es pero venga esto tiene un bitmap asique imprimir)
     printf("\nBitmap De Relleno: ");
-    for(int k =0;k<SIZE_BLOQUE-(MAX_BLOQUES_PARTICION+MAX_INODOS)*sizeof(char);k++){
-        printf("%i ",ext_bytemaps->bmap_relleno[k]);
-    }
+    i -= SIZE_BLOQUE-(MAX_BLOQUES_PARTICION+MAX_INODOS)*sizeof(char);
+    while(++i) {
+        printf("%i ",ext_bytemaps->bmap_relleno[-i]);
+	}
 }
