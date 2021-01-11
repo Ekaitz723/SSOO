@@ -1,3 +1,4 @@
+#include <stdio.h>
 #define SIZE_BLOQUE 512
 #define MAX_INODOS 24
 #define MAX_FICHEROS 20
@@ -9,6 +10,7 @@
 #define LEN_NFICH 17
 #define NULL_INODO 0xFFFF
 #define NULL_BLOQUE 0xFFFF
+
 
 
 /* Estructura del superbloque */
@@ -80,6 +82,7 @@ void nofufa(char *);
 /* Consigue una linea de un FILE*. Hara falta gestinar el acceso al puntero para hacer despues free(char*).
  * Recoge el fichero FILE*.
  * Devuelve una linea de FILE* (char*).
+ * Para poder trabajar con FILE, le añadi la libreria stdio.h porque sino saltaba error
  */
 char* string(FILE *);
 
