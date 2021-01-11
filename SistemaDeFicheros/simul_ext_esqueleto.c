@@ -13,7 +13,7 @@ int ComprobarComando(char *strcomando, char datosComando[][LONGITUD_COMANDO]); /
 void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup); // X
 
 int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
-              char *nombre);
+              char *nombre); // Danila
 
 void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos);
 
@@ -158,13 +158,13 @@ unsigned int s_free_inodes_count;  X
   unsigned char s_relleno[SIZE_BLOQUE-6*sizeof(unsigned int)]; 
 */
 void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
-    printf("Numero de Inodos: %i", psup -> s_inodes_count);
-    printf("Numero de Bloques: %i", psup -> s_blocks_count);
-    printf("Numero de Bloques Libres: %i", psup -> s_free_blocks_count);
-    printf("Numero de Inodos Libres: %i", psup -> s_free_inodes_count);
+    printf("Numeros de Inodos: %i", psup -> s_inodes_count);
+    printf("Numeros de Bloques: %i", psup -> s_blocks_count);
+    printf("Numeros de Bloques Libres: %i", psup -> s_free_blocks_count);
+    printf("Numeros de Inodos Libres: %i", psup -> s_free_inodes_count);
     printf("Primer Bloque de Data: %i", psup -> s_first_data_block);
-    printf("Tamaño de bloque: %i", psup -> s_block_size);
-    printf("Tamaño de Relleno: %i", psup -> s_relleno);
+    printf("Tamaño de Bloque: %i", psup -> s_block_size);
+    //printf("Tamaño de Relleno: %i", psup -> s_relleno);
 }
 
 void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
@@ -172,23 +172,39 @@ void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
     /*Bit map de inodos (como en los ejercicios en clase)*/
     
     //Hacemos un bucle donde pasamos por todos los elemnetos que se guarda en el bmap_inodos
-    printf("\nBitmap De Inodos: ");
+    printf("\nInodos :");
     int i = -MAX_INODOS;
     while(++i) {
         printf("%i ",ext_bytemaps->bmap_inodos[-i]);
 	}
 	
     //Lo mismo de antes pero con Bitmaps de bloque
-    printf("\nBitmap De Bloques: ");
+    printf("\nBloques [0-25] :");
     i -= MAX_BLOQUES_PARTICION;
     while(++i) {
         printf("%i ",ext_bytemaps->bmap_bloques[-i]);
 	}
 
+    //Lo dejo comentado por razones... porque no se en teoria todo lo relacionado con relleno no deberia de existir...
     //Lo mismo de antes pero con Bitmaps de relleno (no se que es pero venga esto tiene un bitmap asique imprimir)
-    printf("\nBitmap De Relleno: ");
+    /*printf("\nBitmap De Relleno: ");
     i -= SIZE_BLOQUE-(MAX_BLOQUES_PARTICION+MAX_INODOS)*sizeof(char);
     while(++i) {
         printf("%i ",ext_bytemaps->bmap_relleno[-i]);
 	}
+*/
+    
+}
+
+//Un poco como indica el nombre, se busca el fichero deseado
+int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombre) {
+    //bucle para buscar todos los directorios
+    int i;
+    for (i = 0; directorio ->dir_inodo != 0xFFFF || strcmp(directorio ->dir_nfich,""); i++)
+    {
+        /* code */
+    }
+    
+        //comprobar si es el mismo nombre de fichero
+    return 0;
 }
