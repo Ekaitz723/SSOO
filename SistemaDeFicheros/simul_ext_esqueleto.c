@@ -15,7 +15,7 @@ void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup); // X
 int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
               char *nombre); // Danila
 
-void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos);
+void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos); // Danila
 
 int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
               char *nombreantiguo, char *nombrenuevo);
@@ -157,7 +157,7 @@ unsigned int s_free_inodes_count;  X
   unsigned int s_block_size;   X     
   unsigned char s_relleno[SIZE_BLOQUE-6*sizeof(unsigned int)]; 
 */
-void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
+void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){ //COMANDO info
     printf("Numeros de Inodos: %i", psup -> s_inodes_count);
     printf("Numeros de Bloques: %i", psup -> s_blocks_count);
     printf("Numeros de Bloques Libres: %i", psup -> s_free_blocks_count);
@@ -167,7 +167,7 @@ void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
     //printf("Tamaño de Relleno: %i", psup -> s_relleno);
 }
 
-void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
+void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){ //COMANDO bytemaps
     
     /*Bit map de inodos (como en los ejercicios en clase)*/
     
@@ -194,6 +194,48 @@ void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
 	}
 */
     
+}
+
+
+// A partir de blq_inodos
+/*typedef struct {
+  unsigned int size_fichero;
+  unsigned short int i_nbloque[MAX_NUMS_BLOQUE_INODO];
+} EXT_SIMPLE_INODE;
+*/
+
+//Estructura de *inodos
+/*typedef struct {
+  EXT_SIMPLE_INODE blq_inodos[MAX_INODOS];
+  unsigned char blq_relleno[SIZE_BLOQUE-MAX_INODOS*sizeof(EXT_SIMPLE_INODE)];
+} EXT_BLQ_INODOS;
+*/
+
+//Estructura de *directorio
+/*typedef struct {
+  char dir_nfich[LEN_NFICH];
+  unsigned short int dir_inodo;
+} EXT_ENTRADA_DIR;
+*/
+void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
+//Necesitare un bucle que pase por todos los directorios
+    int i;
+    int j;
+    for(i=0;i<MAX_INODOS;i++){
+    //comprobar los inodos del fichero y en caso de coincidir con alguno existente
+    if(directorio[i].dir_inodo != "null"){
+        //imprimir su nombre(dir_nfich[LEN_NFICH]), su tamaño(size_fichero), inodo(dir_inodo[MAX_INODOS])
+        printf("%i  tamano:%i   inodo:%i bloques: ",directorio[i].dir_nfich, inodos[i].blq_inodos->size_fichero, directorio[i].dir_nfich);
+            //aqui se hece un bucle para meter todo los bloques que ocupa el directorio (i_nbloque[MAX_NUMS_BLOQUE_INODO])
+            for(j=0;j<MAX_NUMS_BLOQUE_INODO;j++){
+                printf(inodos[i].blq_inodos->i_nbloque[j]);
+                printf(" ");
+            }
+    }
+    printf("\n");
+    }
+
+
 }
 
 //Un poco como indica el nombre, se busca el fichero deseado

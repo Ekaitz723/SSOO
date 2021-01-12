@@ -7,7 +7,7 @@ char* string(FILE *f) {
 
 	//Guarda la cadena que se devolvera.
 	char* str;
-	str = (char*)malloc(sizeof(char)*aumento);	
+	str = (char*)malloc(sizeof(char)*aumento);	//Aqui hay un error
 	if (!str) {
 		nofufa("\nError al leer");
 	}
