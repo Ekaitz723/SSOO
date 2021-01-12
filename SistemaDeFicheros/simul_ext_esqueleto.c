@@ -18,7 +18,7 @@ int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,
 void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos); // X 
 
 int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
-              char *nombreantiguo, char *nombrenuevo);
+              char *nombreantiguo, char *nombrenuevo); //Danila
 
 int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
              EXT_DATOS *memdatos, char *nombre);
@@ -253,4 +253,33 @@ int BuscaFich(EXT_ENTRADA_DIR *directorio, /*EXT_BLQ_INODOS *inodos, (Esto me so
     
         //comprobar si es el mismo nombre de fichero
     return 0;
+}
+
+//Estructura de *inodos
+/*typedef struct {
+  EXT_SIMPLE_INODE blq_inodos[MAX_INODOS];
+  unsigned char blq_relleno[SIZE_BLOQUE-MAX_INODOS*sizeof(EXT_SIMPLE_INODE)];
+} EXT_BLQ_INODOS;
+*/
+
+//Estructura de *directorio
+/*typedef struct {
+  char dir_nfich[LEN_NFICH];
+  unsigned short int dir_inodo;
+} EXT_ENTRADA_DIR;
+*/
+int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombreantiguo, char *nombrenuevo){
+int position;
+
+    // con esto utilizamos buscaFich que se creo
+    if (BuscaFich(directorio,nombrenuevo) != 0){
+        printf("\n Este nombre ya esta cogido \n");
+        return 1;
+    }
+    if(BuscaFich(directorio,nombreantiguo)){
+        position=(directorio,nombreantiguo);
+        strcpy(directorio[position].dir_nfich,nombrenuevo);
+        return 1;
+    }
+
 }
