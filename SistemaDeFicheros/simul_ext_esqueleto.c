@@ -5,7 +5,7 @@
 
 #define LONGITUD_COMANDO 100
 
-//Pongo las X a las funcione que estan hechas ya escritas (no dejadas en comentario) y si alguien esta empezandolas que ponga su nombre
+//Pongo las X a las funcione que estan hechas ya escritas (no dejadas en comentario) y si alguien esta empezandolas que ponga su nombre. Tambien XX significa "escrito y ejecutado(probado)"
 void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps); // X
 
 int ComprobarComando(char *strcomando, char datosComando[][LONGITUD_COMANDO]); // X
@@ -13,9 +13,9 @@ int ComprobarComando(char *strcomando, char datosComando[][LONGITUD_COMANDO]); /
 void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup); // X
 
 int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
-              char *nombre); // Danila
+              char *nombre); // X
 
-void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos); // Danila
+void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos); // X 
 
 int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
               char *nombreantiguo, char *nombrenuevo);
@@ -217,13 +217,13 @@ void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){ //COMANDO bytemaps
   unsigned short int dir_inodo;
 } EXT_ENTRADA_DIR;
 */
-void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
+void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){ //COMANDO dir
 //Necesitare un bucle que pase por todos los directorios
     int i;
     int j;
     for(i=0;i<MAX_INODOS;i++){
     //comprobar los inodos del fichero y en caso de coincidir con alguno existente
-    if(directorio[i].dir_inodo != "null"){
+    if(directorio[i].dir_inodo != 0xFFFF){ // cambie de null a lo otro porque funcionara mejor y tiene mas sentido
         //imprimir su nombre(dir_nfich[LEN_NFICH]), su tamaño(size_fichero), inodo(dir_inodo[MAX_INODOS])
         printf("%i  tamano:%i   inodo:%i bloques: ",directorio[i].dir_nfich, inodos[i].blq_inodos->size_fichero, directorio[i].dir_nfich);
             //aqui se hece un bucle para meter todo los bloques que ocupa el directorio (i_nbloque[MAX_NUMS_BLOQUE_INODO])
@@ -238,13 +238,17 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
 
 }
 
-//Un poco como indica el nombre, se busca el fichero deseado
-int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombre) {
+//Un poco como indica el nombre, se busca el fichero deseado y devuelve la posicion del fichero (es lo que se me ocurrio ya que devuelve un int)
+int BuscaFich(EXT_ENTRADA_DIR *directorio, /*EXT_BLQ_INODOS *inodos, (Esto me sobra un poco pero bueno)*/ char *nombre) {
     //bucle para buscar todos los directorios
     int i;
-    for (i = 0; directorio ->dir_inodo != 0xFFFF || strcmp(directorio ->dir_nfich,""); i++)
+    //como no hay un numero maximo de ficheros, pues se imporvisa
+    for (i = 0; directorio ->dir_inodo != 0xFFFF; i++)
     {
-        /* code */
+        //Se compara el nombre del fichero con todos los existentes y si coinciden con el correcto, se devulve i, que es la de verces que se tuvo que recorrer este bucle para encontrar en nombre
+        if(strcmp(nombre,(directorio++)->dir_nfich)==0){
+            return i;
+        }
     }
     
         //comprobar si es el mismo nombre de fichero
