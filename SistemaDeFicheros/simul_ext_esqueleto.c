@@ -321,7 +321,7 @@ int i,j,posicion;
         {
         	//inodos->blq_inodos[directorio[posicion].dir_inodo] coincide mucho y te sincroniza el nodo del directorio con los bloques que le corresponden 
         	//el -4 y +4 coinciden con el hecho de usa dos factores, el azar y leerse la practica donde dice que las tres primeras posiciones estan ocupadas 
-			//y ya en la 4º para arriba estan ocupadas por los bloques de datos (se ve en la linea 87 aprox)
+			//y ya en la 4ï¿½ para arriba estan ocupadas por los bloques de datos (se ve en la linea 87 aprox)
            memdatos = memdatos + inodos->blq_inodos[directorio[posicion].dir_inodo].i_nbloque[i]-4; 
            for (j=0; j<= SIZE_BLOQUE; j++){
 				printf("%c", memdatos->dato[j]);
@@ -345,4 +345,8 @@ int i,j,posicion;
     }
     
     
+}
+//6 parametros, de structs que llevan a otras variables y que estas llevan a otras variables..... Ameno...
+int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock,char *nombre,  FILE *fich){
+
 }
