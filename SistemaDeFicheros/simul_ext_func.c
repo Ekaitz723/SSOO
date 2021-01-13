@@ -1,6 +1,6 @@
 #include "cabeceras.h"
 
-char* string(FILE *f) {
+/*char* string(FILE *f) {
 
 	//En cuanto sumamos el realloc
 	char aumento=AUMCONSTR;
@@ -35,10 +35,10 @@ char* string(FILE *f) {
 	str[tam-1]='\0';
 	
 	return str;
-}
+}*/
 
-void nofufa(char* mensaje) {
+/*void nofufa(char* mensaje) {
 	printf("\n");
 	printf(mensaje);
 	exit(-1);
-}
+}*/

@@ -87,3 +87,11 @@ void nofufa(char *);
 char* string(FILE *);
 
 /**************/
+
+/*
+
+Dudas: relleno?
+Cosas: 
+el 25 de print bytemaps sacarlo a #
+
+*/
