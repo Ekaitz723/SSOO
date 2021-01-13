@@ -18,10 +18,10 @@ int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,
 void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos); // X 
 
 int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
-              char *nombreantiguo, char *nombrenuevo); //Danila
+              char *nombreantiguo, char *nombrenuevo); //X
 
 int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
-             EXT_DATOS *memdatos, char *nombre);
+             EXT_DATOS *memdatos, char *nombre);// Danila
 
 int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,
            EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock,
@@ -271,13 +271,15 @@ int BuscaFich(EXT_ENTRADA_DIR *directorio, /*EXT_BLQ_INODOS *inodos, (Esto me so
 int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombreantiguo, char *nombrenuevo){
 int position;
 
-    // con esto utilizamos buscaFich que se creo
+    // con esto utilizamos buscaFich que se creo para ver si coincide con el nombre nuevo, en caso de ser hasi se sale de la funcion
     if (BuscaFich(directorio,nombrenuevo) != 0){
         printf("\n Este nombre ya esta cogido \n");
         return 1;
     }
+    // si por el contrario, no es el if de arriba, se busca y se mira en caso de existir el nombreantiguo quepuso, y en caso correcto, 
+    // se ve que fichero es, (su posicion) y luego se sobre escribe el nombres
     if(BuscaFich(directorio,nombreantiguo)){
-        position=(directorio,nombreantiguo);
+        position=BuscaFich(directorio,nombreantiguo);
         strcpy(directorio[position].dir_nfich,nombrenuevo);
         return 1;
     }
