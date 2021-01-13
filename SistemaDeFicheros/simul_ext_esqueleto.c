@@ -53,7 +53,7 @@ int main() {
 //	char argumento2[LONGITUD_COMANDO];
 
 	
-	//printf("∫∫%i∫∫",ComprobarComando(zaborra = string(stdin),datosComando));
+	//printf("ÔøΩÔøΩ%iÔøΩÔøΩ",ComprobarComando(zaborra = string(stdin),datosComando));
 	//printf("\n\n%s %s %s\n",datosComando[0], datosComando[1], datosComando[2]);
 	//free(zaborra);
 	
@@ -89,9 +89,9 @@ int main() {
 	//Printbytemaps(&ext_bytemaps);
 	//LeeSuperBloque(&ext_superblock);
 	//BuscaFich(directorio[3],"BelloGal.txt");
-	Renombrar(directorio, &ext_blq_inodos, "CHISTE.txt", "NOTUVOGRASIA.TXT");
-	Directorio(directorio, &ext_blq_inodos);
-	
+	//Renombrar(directorio, &ext_blq_inodos, "NOTUVOGRASIA.TXT", "CHISTE.txt");
+	//Directorio(directorio, &ext_blq_inodos);
+	Imprimir(directorio,&ext_blq_inodos,memdatos,"BelloGal.txt");
 	
 	
 	
@@ -305,8 +305,44 @@ int position;
 }
 
 int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
-	//coso->bloque->info
-	
-	//buscaDir
-	//bu
+//OBJETIVO: Muestra el contenido del fichero especificado como un texto. Deber√° comprobar que el
+//fichero existe. Si el fichero ocupa m√°s de un bloque, debe aparecer en el orden
+//correcto.
+
+//Codigo:  
+int i,j,posicion; 
+//Se busca el directorio que se desea imprimir en un bucle que pase por todos los directorios
+    if(BuscaFich(directorio,nombre))
+    {
+    //consigue la cantidad de bloques
+    posicion=BuscaFich(directorio,nombre);
+        //Bucle donde va imprimiendo bloque a bloque EN ORDEN
+        for ( i = 0; i < inodos[posicion].blq_inodos->i_nbloque; i++)
+        {
+        	//inodos->blq_inodos[directorio[posicion].dir_inodo] coincide mucho y te sincroniza el nodo del directorio con los bloques que le corresponden 
+        	//el -4 y +4 coinciden con el hecho de usa dos factores, el azar y leerse la practica donde dice que las tres primeras posiciones estan ocupadas 
+			//y ya en la 4∫ para arriba estan ocupadas por los bloques de datos (se ve en la linea 87 aprox)
+           memdatos = memdatos + inodos->blq_inodos[directorio[posicion].dir_inodo].i_nbloque[i]-4; 
+           for (j=0; j<= SIZE_BLOQUE; j++){
+				printf("%c", memdatos->dato[j]);
+			}
+			//le restauramos la posicion de los datos para ir a l siguiente linea (metadatos - .... y +4 al final) pero esto es solo una teria hasta un punto y me ha funcionado con esto
+			memdatos = memdatos - inodos->blq_inodos[directorio[posicion].dir_inodo].i_nbloque[i]+4;
+            
+        }
+        printf("\n");
+        return 0;
+
+        //Else dara un error de este fichero no existe, le vale verga vamos
+        if (strcmp(nombre, "\n") == 0){
+		printf("No me seas lelo, ponme un fichero que leer\n");
+		return 1;
+        }
+       
+        printf("Emm no se de que me hablas \n");
+        
+
+    }
+    
+    
 }
