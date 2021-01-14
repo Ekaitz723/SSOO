@@ -53,7 +53,7 @@ int main() {
 //	char argumento2[LONGITUD_COMANDO];
 
 	
-	//printf("��%i��",ComprobarComando(zaborra = string(stdin),datosComando));
+	//printf("ï¿½ï¿½%iï¿½ï¿½",ComprobarComando(zaborra = string(stdin),datosComando));
 	//printf("\n\n%s %s %s\n",datosComando[0], datosComando[1], datosComando[2]);
 	//free(zaborra);
 	
@@ -91,7 +91,7 @@ int main() {
 	//BuscaFich(directorio[3],"BelloGal.txt");
 	//Renombrar(directorio, &ext_blq_inodos, "NOTUVOGRASIA.TXT", "CHISTE.txt");
 	//Directorio(directorio, &ext_blq_inodos);
-	Imprimir(directorio,&ext_blq_inodos,memdatos,"BelloGal.txt");
+	Imprimir(directorio,&ext_blq_inodos,memdatos,"HOLA.txt");
 	
 	
 	
@@ -110,11 +110,36 @@ int main() {
 		} while (ComprobarComando(comando,datosComando));
 		//Comando tiene todo
 		//datosComando
+		//(Hay 7 comandos + (salir))
 	    if (!strcmp(orden,"dir")) {
             Directorio(&directorio,&ext_blq_inodos);
             continue;
     		}
-        ...
+    	if (!strcmp(orden,"bytemaps")) {
+            LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup);
+            continue;
+    		}
+    	if (!strcmp(orden,"rename")) {
+            Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombreantiguo, char *nombrenuevo);
+            continue;
+    		}
+    	if (!strcmp(orden,"imprimir")) {
+           Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre);
+            continue;
+    		}
+    	if (!strcmp(orden,"bytemaps")) {
+            Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps);
+            continue;
+    		}
+    	if (!strcmp(orden,"remove")) {
+            Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock,char *nombre,  FILE *fich);
+            continue;
+    		}
+    	if (!strcmp(orden,"copy")) {
+           int Copiar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock,EXT_DATOS *memdatos, char *nombreorigen, char *nombredestino,  FILE *fich);
+            continue;
+    		}
+    
         // Escritura de metadatos en comandos rename, remove, copy     
         Grabarinodosydirectorio(&directorio,&ext_blq_inodos,fent);
         GrabarByteMaps(&ext_bytemaps,fent);
@@ -122,7 +147,7 @@ int main() {
         if (grabardatos)
         	GrabarDatos(&memdatos,fent);
         grabardatos = 0;
-        //Si el comando es salir se habrán escrito todos los metadatos
+        //Si el comando es salir se habrÃ¡n escrito todos los metadatos
         //faltan los datos y cerrar
         if (strcmp(orden,"salir")==0){
         	GrabarDatos(&memdatos,fent);
@@ -305,8 +330,8 @@ int position;
 }
 
 int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
-//OBJETIVO: Muestra el contenido del fichero especificado como un texto. Deberá comprobar que el
-//fichero existe. Si el fichero ocupa más de un bloque, debe aparecer en el orden
+//OBJETIVO: Muestra el contenido del fichero especificado como un texto. DeberÃ¡ comprobar que el
+//fichero existe. Si el fichero ocupa mÃ¡s de un bloque, debe aparecer en el orden
 //correcto.
 
 //Codigo:  
@@ -321,7 +346,7 @@ int i,j,posicion;
         {
         	//inodos->blq_inodos[directorio[posicion].dir_inodo] coincide mucho y te sincroniza el nodo del directorio con los bloques que le corresponden 
         	//el -4 y +4 coinciden con el hecho de usa dos factores, el azar y leerse la practica donde dice que las tres primeras posiciones estan ocupadas 
-			//y ya en la 4� para arriba estan ocupadas por los bloques de datos (se ve en la linea 87 aprox)
+			//y ya en la 4ï¿½ para arriba estan ocupadas por los bloques de datos (se ve en la linea 87 aprox)
            memdatos = memdatos + inodos->blq_inodos[directorio[posicion].dir_inodo].i_nbloque[i]-4; 
            for (j=0; j<= SIZE_BLOQUE; j++){
 				printf("%c", memdatos->dato[j]);
@@ -348,5 +373,49 @@ int i,j,posicion;
 }
 //6 parametros, de structs que llevan a otras variables y que estas llevan a otras variables..... Ameno...
 int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock,char *nombre,  FILE *fich){
-
+	int i = 0, j,posicion;
+    //Vamos a busacar al suertudo
+	if (BuscaFich(directorio, nombre) != 0){	
+		posicion= BuscaFich(directorio, nombre);
+        //vamos a empezar a liberar cosas (empezando por el superbloque)
+		while( (directorio->dir_inodo != NULL_INODO || strcmp(directorio->dir_nfich, "" ) == 0) && i++ < MAX_INODOS);
+		//Primero el bloques libres
+        ext_superblock->s_free_blocks_count += (i - 1);								
+		//Luego inodos
+        ext_superblock->s_free_inodes_count += 1;									
+		//Ahora el nombre ya no existe
+        strcpy(directorio->dir_nfich , "");											
+		//le cambiamos los bit´maps tambien
+        //los de inodo
+        ext_bytemaps->bmap_inodos[posicion] = 0;						
+		inodos->blq_inodos[posicion].size_fichero = 0;					
+		for(i = 0; inodos->blq_inodos[posicion].i_nbloque[i] != NULL_BLOQUE; i++){
+            //los de bloque
+			ext_bytemaps->bmap_bloques[inodos->blq_inodos[posicion].i_nbloque[i]] = 0;	
+		}
+		for(i = 0; i <=MAX_NUMS_BLOQUE_INODO; i++){
+			if(ext_superblock->s_first_data_block == inodos->blq_inodos[posicion].i_nbloque[i]){
+				for(j = 4; j<=MAX_BLOQUES_DATOS; j++){
+					if(ext_bytemaps->bmap_bloques[j] == 1){
+						ext_superblock->s_first_data_block = j;			
+						break;
+					}
+				}
+			}
+            //Ponienod la direccion 0xFFFF
+			inodos->blq_inodos[posicion].i_nbloque[i] = NULL_BLOQUE;	
+		}
+        //Lo mismo de antes peor con inodo
+		directorio->dir_inodo = NULL_INODO;										
+		return 0;
+	}
+	if (strcmp(nombre, "\0") == 0){
+		printf("El fichero al cual quiere usted acudir esta escrito de forma erronea o no existe'\n");
+		return 1;
+	}
+	else{
+		printf("No hay ficheros, te los cargaste todos\n");
+		return 1;
+	}
+	
 }
