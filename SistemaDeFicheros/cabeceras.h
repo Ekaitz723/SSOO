@@ -12,6 +12,28 @@
 #define NULL_BLOQUE 0xFFFF
 
 
+/***************/
+
+/* Aumento realloc de fconstr.
+ * Cantidad de datos en comando.
+ * Cantidad de elementos imprimibles del bytemap de bloques.
+ * Longitud de comando.
+ */
+#define AUMCONSTR 16  //borrar este
+#define DATOSCOMANDO 3
+#define CANTDATOSBITMAP 25
+#define LONGITUD_COMANDO 100
+
+//RECOLECTOR DE BASURA
+void* zaborra;
+
+//Solo porque puedo.
+typedef char* String;
+
+//*Enum de cosas
+//enum comando{bytemaps, copy, dir, info, imprimir, birname, birmove, salir};
+
+/***************/
 
 /* Estructura del superbloque */
 typedef struct {
@@ -54,28 +76,6 @@ typedef struct{
   unsigned char dato[SIZE_BLOQUE]; 	
 } EXT_DATOS;
 
-/***************/
-
-/* Aumento realloc de fconstr.
- * Cantidad de datos en comando.
- * Cantidad de elementos imprimibles del bytemap de bloques.
- * Longitud de comando.
- */
-#define AUMCONSTR 16
-#define DATOSCOMANDO 3
-#define CANTDATOSBITMAP 25
-#define LONGITUD_COMANDO 100
-
-//RECOLECTOR DE BASURA
-void* zaborra;
-
-//Solo porque puedo.
-typedef char* String;
-
-//*Enum de cosas
-//enum comando{bytemaps, copy, dir, info, imprimir, birname, birmove, salir};
-
-/***************/
 
 /*Muestra mensaje de error y mata el proceso.
  *Recoge el mensaje (char*).

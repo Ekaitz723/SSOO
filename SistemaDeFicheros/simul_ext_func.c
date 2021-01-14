@@ -3,27 +3,32 @@
 #include <ctype.h>
 #include "cabeceras.h"
 
+//TODO
+// rename usar lo de obtener los bloques
+
 //Devuelve true si es que no es posible crear otro fichero (copiar el fichero).
-int InsufEspacio(EXT_BYTE_MAPS *ext_bytemaps,unsigned short int *bloques , char *nombre) {
-	int i;
-	
-	//SE USARA EN COPIAR
-	//pepe = inodos->blq_inodos[BuscaFich(directorio,nombre)].i_nbloque;
-	
-	int cantBloquesNecesarios = ContarBloques(bloques,0);
-//	int pos = posicion=BuscaFich(directorio,nombre);
+//Recoge el tamaino ya que donde lo vamos a usar ya tendremos el tamaino. En otras funciones si llegasemos a usarlo (no) le ponemos como parametro ContarBloques(LOS PARAMETROS NECESARIOS).
+int InsufEspacio(unsigned char bmap_bloques[MAX_BLOQUES_PARTICION], unsigned short int *puntBloque, int cantBloquesNecesarios, char *nombre) {
+	int i,bloquesLibres = 0;
+//	inodos->blq_inodos[BuscaFich(directorio,nombre)].i_nbloque
 	
 	/*Recorremos los bytemaps hasta encontrar un 0. Entoces devolvemos false. En el caso del bytemap de bloques, se necesitaran la misma cantidad de 0 que de bloques que ocupa el fichero pasado por parametro.*/
 	
 	if(ComprInodos())
 		return 1;
 
-	for(i=0;i<CANTDATOSBITMAP;i++) {
-        printf("%i ",ext_bytemaps->bmap_bloques[i]);
+	//Comprueba si tenemos los bloques libres necesarios.
+	for(i=0; bloquesLibres < cantBloquesNecesarios &&  i<MAX_BLOQUES_PARTICION;i++) {
+		if(!bmap_bloques[i])
+			printf("JAJAXD");
+			++bloquesLibres;
 	}
-	
+		printf("�ENTRA HASTA ACAA00�%i�",i);
+	if(cantBloquesNecesarios != bloquesLibres) {
+		printf("ENTRA EN EL IF, NO ES IGUAL, TIENE MAS, PUES NO SE PUEDE");
+		return 1;
+	}
 	return 0;
-	 
 }
 
 //Devuelve false si hay un inodo libre.
@@ -99,7 +104,7 @@ void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){ //COMANDO bytemaps
     
 }
 
-void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){ //COMANDO dir
+void Directorio(EXT_ENTRADA_DIR *directorio, EXT_SIMPLE_INODE blq_inodos[MAX_INODOS]){ //COMANDO dir
 	//Se iterara sobre los directorios usados o borrados hasta llegar a uno vacio (o al maximo de ellos en su defecto).
 	//Esta expresion aparecera repetidas veces durante el codigo.
 	// SOP	     BORRADO , i<MAX
@@ -114,21 +119,27 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){ //COMANDO 
 			++directorio;
 		else {
 			//Info de directorio.
-			printf("[%s]\t| tamaino: %i\t| inodo: %i  bloques: ", directorio->dir_nfich, inodos->blq_inodos[directorio->dir_inodo].size_fichero, directorio->dir_inodo);
+			printf("[%s]\t| tamaino: %i\t| inodo: %i  bloques: ", directorio->dir_nfich, blq_inodos[directorio->dir_inodo].size_fichero, directorio->dir_inodo);
 
 			//Bloques que ocupa el directorio.
-            printf(" [%i]\n",ContarBloques(inodos->blq_inodos[(directorio++)->dir_inodo].i_nbloque,inodos,1));
+            printf(" [%i]\n",ContarBloques(blq_inodos[(directorio++)->dir_inodo].i_nbloque,1,NULL));
 		}
 	}
 }
 
 //Devuelve la cantidad de bloques que ocupa un fichero
-int ContarBloques(unsigned short int *bloque, int verbose) {
+int ContarBloques(unsigned short int puntBloque[MAX_NUMS_BLOQUE_INODO], int verbose, int *bloquesLibres) {
+	
+	//Ahora inecesario, ya que no podemos alterar los archivos. Despues de la entrega le seguiremos dando a este codigo asique dejamos este int comentado.
+//	int jbloquesLibres=0;
 	int j;
-	for(j=0;(*(bloque+j) != NULL_BLOQUE) && j < MAX_NUMS_BLOQUE_INODO;j++) {
+	for(j=0;(*(puntBloque+j) != NULL_BLOQUE) && j < MAX_NUMS_BLOQUE_INODO;j++) {
 		if(verbose)
-			printf("%i ", *(bloque+j));
-	}	
+			printf("%i ", *(puntBloque+j));
+		if(bloquesLibres != NULL) {
+			bloquesLibres[j] = *(puntBloque+j);
+		}
+	}
 	return j;
 }
 
@@ -136,8 +147,9 @@ int ContarBloques(unsigned short int *bloque, int verbose) {
 int BuscaFich(EXT_ENTRADA_DIR *directorio, char *nombre) {
     //bucle para buscar todos los directorios
     int i;
-    //como no hay un numero maximo de ficheros, pues se imporvisa
-    for (i = 0; directorio ->dir_inodo != 0xFFFF; i++)
+    
+    //Recorre el directorio.
+    for (i = 0; (directorio->dir_inodo != NULL_INODO || strcmp(directorio->dir_nfich, "" ) == 0)  && i++ < MAX_INODOS; i++)
     {
         //Se compara el nombre del fichero con todos los existentes y si coinciden con el correcto, se devulve i, que es la de verces que se tuvo que recorrer este bucle para encontrar en nombre
         if(strcmp(nombre,(directorio++)->dir_nfich)==0){
@@ -168,50 +180,41 @@ int position;
 }
 
 int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
-//OBJETIVO: Muestra el contenido del fichero especificado como un texto. DeberÃ¡ comprobar que el
-//fichero existe. Si el fichero ocupa mÃ¡s de un bloque, debe aparecer en el orden
-//correcto.
+	
+	//Codigo:  
+	int i,j,cantBloques;
+	int bloquesImprimir[MAX_NUMS_BLOQUE_INODO];
+	
+	//Comprobamos que el fichero a imprimir existe.
+    if((cantBloques = BuscaFich(directorio,nombre))) {
 
-//Codigo:  
-int i,j,posicion; 
-//Se busca el directorio que se desea imprimir en un bucle que pase por todos los directorios
-    if(BuscaFich(directorio,nombre))
-    {
-    //consigue la cantidad de bloques
-    posicion=BuscaFich(directorio,nombre);
-        //Bucle donde va imprimiendo bloque a bloque EN ORDEN
-        int numBloques
-        for ( i = 0; i < ; i++)
-        {
-        	//inodos->blq_inodos[directorio[posicion].dir_inodo] coincide mucho y te sincroniza el nodo del directorio con los bloques que le corresponden 
-        	//el -4 y +4 coinciden con el hecho de usa dos factores, el azar y leerse la practica donde dice que las tres primeras posiciones estan ocupadas 
-			//y ya en la 4ï¿½ para arriba estan ocupadas por los bloques de datos (se ve en la linea 87 aprox)
-			//EOF es 0.
-           memdatos = memdatos + inodos->blq_inodos[directorio[posicion].dir_inodo].i_nbloque[i]-4; 
-           for (j=0; j<= SIZE_BLOQUE && memdatos->dato[j] != 0; j++){
+		cantBloques = ContarBloques(inodos->blq_inodos[cantBloques].i_nbloque,0,bloquesImprimir);
+
+		//Bucle donde imprime los bloques.
+	    //No hace falta comprobar si es nulo ya que cantBloques es exactamente el numero de bloques que tenemos que imprimir.
+	    for ( i = 0; i < cantBloques; i++) {
+	    	
+	    	//Hoy en cuarto milenio, el x = x + a que no es lo mismo que x = x + a.
+	    	//Ya me di cuenta de por que pero me hacia gracia el comentario asique lo dejo.
+			memdatos = memdatos + bloquesImprimir[i]-4;
+	    	
+	    	//EOF es 0.
+	    	for (j=0; j<= SIZE_BLOQUE && memdatos->dato[j] != 0; j++){
 				printf("%c", memdatos->dato[j]);
 			}
+			
 			//le restauramos la posicion de los datos para ir a l siguiente linea (metadatos - .... y +4 al final) pero esto es solo una teria hasta un punto y me ha funcionado con esto
-			memdatos = memdatos - inodos->blq_inodos[directorio[posicion].dir_inodo].i_nbloque[i]+4;
-            
-        }
-        printf("\n");
-        return 0;
-
-        //Else dara un error de este fichero no existe, le vale verga vamos
-        if (strcmp(nombre, "\n") == 0){
-		printf("No me seas lelo, ponme un fichero que leer\n");
-		return 1;
-        }
-       
-        printf("Emm no se de que me hablas \n");
-        
-
+			memdatos = memdatos - bloquesImprimir[i]+4;
+		}
+	    printf("\n");
+	    return 0;
     }
-    
-    
+    if (strcmp(nombre, "\n") == 0){
+		printf("No me seas, ponme un fichero que leer\n");
+		return 1;
+	}
+	printf("\nNo existe\n");
 }
-
 
 //6 parametros, de structs que llevan a otras variables y que estas llevan a otras variables..... Ameno...
 int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock,char *nombre,  FILE *fich){
