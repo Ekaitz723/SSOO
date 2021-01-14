@@ -90,9 +90,10 @@ int main() {
 	//LeeSuperBloque(&ext_superblock);
 	//BuscaFich(directorio[3],"BelloGal.txt");
 	//Renombrar(directorio, &ext_blq_inodos, "NOTUVOGRASIA.TXT", "CHISTE.txt");
-	//Directorio(directorio, &ext_blq_inodos);
-	Imprimir(directorio,&ext_blq_inodos,memdatos,"HOLA.txt");
-	
+
+	//Imprimir(directorio,&ext_blq_inodos,memdatos,"HOLA.txt");
+	Borrar(directorio,&ext_blq_inodos ,&ext_bytemaps, &ext_superblock,"HOLA.txt", fent);
+	Directorio(directorio, &ext_blq_inodos);
 	
 	
 	
@@ -261,7 +262,7 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){ //COMANDO 
 	//		  1  0   0   1   0
 	
 	int i = 0;
-	while( (directorio->dir_inodo != NULL_INODO || strcmp(directorio->dir_nfich, "" ) == 0) && i++ < MAX_INODOS ) {
+	while( (directorio->dir_inodo != NULL_INODO || strcmp(directorio->dir_nfich, "" ) == 0)) {
 		//Si el nombre de 
 		if( strcmp(directorio->dir_nfich, "") == 0 || strcmp(directorio->dir_nfich, ".") == 0 )
 			++directorio;
@@ -388,14 +389,17 @@ int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ex
 		//le cambiamos los bit´maps tambien
         //los de inodo
         ext_bytemaps->bmap_inodos[posicion] = 0;						
-		inodos->blq_inodos[posicion].size_fichero = 0;					
+		inodos->blq_inodos[posicion].size_fichero = 0;	
+        printf("A");				
 		for(i = 0; inodos->blq_inodos[posicion].i_nbloque[i] != NULL_BLOQUE; i++){
             //los de bloque
 			ext_bytemaps->bmap_bloques[inodos->blq_inodos[posicion].i_nbloque[i]] = 0;	
 		}
+        printf("B");
 		for(i = 0; i <=MAX_NUMS_BLOQUE_INODO; i++){
 			if(ext_superblock->s_first_data_block == inodos->blq_inodos[posicion].i_nbloque[i]){
-				for(j = 4; j<=MAX_BLOQUES_DATOS; j++){
+				printf("C");
+                for(j = 4; j<=MAX_BLOQUES_DATOS; j++){
 					if(ext_bytemaps->bmap_bloques[j] == 1){
 						ext_superblock->s_first_data_block = j;			
 						break;
@@ -405,6 +409,7 @@ int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ex
             //Ponienod la direccion 0xFFFF
 			inodos->blq_inodos[posicion].i_nbloque[i] = NULL_BLOQUE;	
 		}
+        printf("D");
         //Lo mismo de antes peor con inodo
 		directorio->dir_inodo = NULL_INODO;										
 		return 0;
@@ -418,4 +423,21 @@ int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ex
 		return 1;
 	}
 	
+}
+void GrabarSuperBloque(EXT_SIMPLE_SUPERBLOCK *ext_superblock, FILE *fich){
+	rewind(fich);
+	fwrite(ext_superblock, SIZE_BLOQUE, 1, fich);
+}
+
+void GrabarByteMaps(EXT_BYTE_MAPS *ext_bytemaps, FILE *fich){
+    fwrite(ext_bytemaps, SIZE_BLOQUE, 1, fich);
+}
+
+void Grabarinodosydirectorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, FILE *fich){
+	fwrite(inodos, SIZE_BLOQUE, 1, fich);
+    fwrite(directorio, SIZE_BLOQUE, 1, fich);
+}
+
+void GrabarDatos(EXT_DATOS *memdatos, FILE *fich){
+    fwrite(memdatos, SIZE_BLOQUE, MAX_BLOQUES_DATOS, fich);
 }
