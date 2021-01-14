@@ -4,10 +4,13 @@
 #include "cabeceras.h"
 
 //Devuelve true si es que no es posible crear otro fichero (copiar el fichero).
-int InsufEspacio(EXT_BYTE_MAPS *ext_bytemaps, EXT_ENTRADA_DIR *directorio, char *nombre) {
+int InsufEspacio(EXT_BYTE_MAPS *ext_bytemaps,unsigned short int *bloques , char *nombre) {
 	int i;
-	inodos->blq_inodos[BuscaFich(directorio,nombre)].i_nbloque
-	int cantBloquesNecesarios = ContarBloques;
+	
+	//SE USARA EN COPIAR
+	//pepe = inodos->blq_inodos[BuscaFich(directorio,nombre)].i_nbloque;
+	
+	int cantBloquesNecesarios = ContarBloques(bloques,0);
 //	int pos = posicion=BuscaFich(directorio,nombre);
 	
 	/*Recorremos los bytemaps hasta encontrar un 0. Entoces devolvemos false. En el caso del bytemap de bloques, se necesitaran la misma cantidad de 0 que de bloques que ocupa el fichero pasado por parametro.*/
@@ -164,7 +167,7 @@ int position;
 
 }
 
-/*int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
+int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
 //OBJETIVO: Muestra el contenido del fichero especificado como un texto. DeberÃ¡ comprobar que el
 //fichero existe. Si el fichero ocupa mÃ¡s de un bloque, debe aparecer en el orden
 //correcto.
@@ -177,7 +180,8 @@ int i,j,posicion;
     //consigue la cantidad de bloques
     posicion=BuscaFich(directorio,nombre);
         //Bucle donde va imprimiendo bloque a bloque EN ORDEN
-        for ( i = 0; i < inodos[posicion].blq_inodos->i_nbloque; i++)
+        int numBloques
+        for ( i = 0; i < ; i++)
         {
         	//inodos->blq_inodos[directorio[posicion].dir_inodo] coincide mucho y te sincroniza el nodo del directorio con los bloques que le corresponden 
         	//el -4 y +4 coinciden con el hecho de usa dos factores, el azar y leerse la practica donde dice que las tres primeras posiciones estan ocupadas 
@@ -207,7 +211,7 @@ int i,j,posicion;
     
     
 }
-*/
+
 
 //6 parametros, de structs que llevan a otras variables y que estas llevan a otras variables..... Ameno...
 int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock,char *nombre,  FILE *fich){
