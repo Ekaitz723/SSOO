@@ -58,9 +58,13 @@ typedef struct{
 
 /* Aumento realloc de fconstr.
  * Cantidad de datos en comando.
+ * Cantidad de elementos imprimibles del bytemap de bloques.
+ * Longitud de comando.
  */
 #define AUMCONSTR 16
 #define DATOSCOMANDO 3
+#define CANTDATOSBITMAP 25
+#define LONGITUD_COMANDO 100
 
 //RECOLECTOR DE BASURA
 void* zaborra;
